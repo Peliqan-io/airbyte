@@ -13,6 +13,9 @@ from typing import Any, Generic, List, Mapping, Optional, Protocol, TypeVar, Uni
 import yaml
 from airbyte_cdk.models import AirbyteConnectionStatus, ConnectorSpecification
 
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+import base64
 
 def load_optional_package_file(package: str, filename: str) -> Optional[bytes]:
     """Gets a resource from a package, returning None if it does not exist"""
@@ -55,6 +58,19 @@ class BaseConnector(ABC, Generic[TConfig]):
             raise ValueError(
                 f"The content of {config_path} is not an object and therefore is not a valid config. Please ensure the file represent a config."
             )
+
+    @staticmethod
+    def _decrypt_config_values(config: Mapping):
+        # 16mb rsa key will generate a 2732 character encrypted string with '=' at the end
+        encrypted_config = {}
+        for key, value in config.items():
+            if type(value) == str and len(value) >= 2732 and value[-1:] == "=":
+                private_key = RSA.importKey(open("/etc/oauth_keys/private.pem", "rb").read())
+                cipher_rsa = PKCS1_OAEP.new(private_key)
+                decrypted = cipher_rsa.decrypt(base64.b64decode(value)).decode()
+                config[key] = decrypted
+                encrypted_config[f'encrypted_{key}'] = value
+        return config
 
     @staticmethod
     def _read_json_file(file_path: str) -> Union[None, bool, float, int, str, List[Any], Mapping[str, Any]]:
