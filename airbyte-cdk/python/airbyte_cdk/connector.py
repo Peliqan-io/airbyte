@@ -53,7 +53,7 @@ class BaseConnector(ABC, Generic[TConfig]):
     def read_config(config_path: str) -> Mapping[str, Any]:
         config = BaseConnector._read_json_file(config_path)
         if isinstance(config, Mapping):
-            return config
+            return BaseConnector._decrypt_config_values(config)
         else:
             raise ValueError(
                 f"The content of {config_path} is not an object and therefore is not a valid config. Please ensure the file represent a config."
