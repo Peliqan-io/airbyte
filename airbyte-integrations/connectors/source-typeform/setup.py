@@ -6,7 +6,7 @@
 from setuptools import find_packages, setup
 
 MAIN_REQUIREMENTS = [
-    "airbyte-cdk",
+    "airbyte-cdk @ git+https://github.com/Peliqan-io/airbyte.git@master#egg=airbyte-cdk&subdirectory=airbyte-cdk/python",
 ]
 
 TEST_REQUIREMENTS = ["pytest~=6.1", "connector-acceptance-test", "pytest-mock~=3.6", "requests_mock~=1.8"]
