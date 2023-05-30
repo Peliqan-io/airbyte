@@ -62,6 +62,8 @@ setup(
         "Deprecated~=1.2",
         "Jinja2~=3.1.2",
         "cachetools",
+        'pycryptodome',
+        'pycryptodomex',
     ],
     python_requires=">=3.8",
     extras_require={
