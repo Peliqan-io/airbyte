@@ -6,6 +6,8 @@ definitions:
       field_path: ["data"]
 
   requester:
+    type: CustomRequester
+    class_name: source_mailerlite.components.HttpRequesterWithRateLimiter
     url_base: "https://connect.mailerlite.com/api"
     http_method: "GET"
     authenticator:
