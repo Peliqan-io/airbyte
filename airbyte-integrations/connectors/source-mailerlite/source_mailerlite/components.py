@@ -21,7 +21,7 @@ from airbyte_cdk.sources.declarative.types import Config, StreamSlice, StreamSta
 class MailerliteRateLimiter:
     """
     Define timings for RateLimits. Adjust timings if needed.
-    :: on_unknown_load = 1.0 sec - Intercom recommended time to hold between each API call.
+    :: on_unknown_load = 1.0 sec - Time to hold between each API call.
     :: on_low_load = 0.01 sec (10 miliseconds) - ideal ratio between hold time and api call, also the standard hold time between each API call.
     :: on_mid_load = 1.5 sec - great timing to retrieve another 15% of request capacity while having mid_load.
     :: on_high_load = 8.0 sec - ideally we should wait 5.0 sec while having high_load, but we hold 8 sec to retrieve up to 80% of request capacity.
@@ -29,7 +29,7 @@ class MailerliteRateLimiter:
 
     threshold: float = 0.1
     on_unknown_load: float = 1.0
-    on_low_load: float = 0.01
+    on_low_load: float = 1.0
     on_mid_load: float = 1.5
     on_high_load: float = 8.0  # max time
 
@@ -78,7 +78,7 @@ class MailerliteRateLimiter:
         rate_limit_remain_header: str = "X-RateLimit-Remaining",
     ):
         """
-        To avoid reaching Intercom API Rate Limits, use the 'X-RateLimit-Limit','X-RateLimit-Remaining' header values,
+        To avoid reaching API Rate Limits, use the 'X-RateLimit-Limit','X-RateLimit-Remaining' header values,
         to determine the current rate limits and load and handle backoff_time based on load %.
         Recomended backoff_time between each request is 1 sec, we would handle this dynamicaly.
         :: threshold - is the % cutoff for the rate_limits % load, if this cutoff is crossed,
@@ -93,7 +93,6 @@ class MailerliteRateLimiter:
             X-RateLimit-Reset: 1487332510
         },
             where: 51 - requests remains and goes down, 100 - max requests capacity.
-        More information: https://developers.intercom.com/intercom-api-reference/reference/rate-limiting
         """
 
         # find the requests.Response inside args list
